@@ -7,6 +7,8 @@
 
 #include <vector>
 
+bool isSquare(unsigned long long n);
+
 using namespace std;
 class Matrix {
 
@@ -17,16 +19,36 @@ class Matrix {
 		Matrix(int n);
 		Matrix(int r, int c);
 
-
-
-
-
-
-		Matrix(double *p);
+		Matrix(double *p, unsigned long long size);
 
 		void printMatrix();
 
+		void set_value(int row, int column, double newNum);
+
+		double get_value(int row, int column);
+
+		void clear();
+		~Matrix();
+
+		// note to self: >> is the insertion operator
+		friend ostream &operator<<(ostream & o, Matrix & m);
+		// your friends can access your privates
+
+		friend bool operator== (const Matrix &lhs, const Matrix &rhs);
+		friend bool operator!= (Matrix &lhs, Matrix &rhs);
+		Matrix& operator++(); // prefix
+		Matrix& operator--(); // prefix
+
+		Matrix operator++(int); // postfix
+		Matrix operator--(int); // postfix
+
+		Matrix& operator=(Matrix rhs);
+
+		void mySwap(Matrix& matrix, Matrix rhs);
 };
+//istream ist = filename(A.TXT);
+Matrix x;
+//while(ist >> x)
 
 
 #endif //ASSIGNMENT01_MATRIX_HPP
