@@ -45,6 +45,19 @@ class Matrix {
 		Matrix& operator=(Matrix rhs);
 
 		void mySwap(Matrix& matrix, Matrix rhs);
+
+//		friend bool operator<=(const Matrix& lhs, const Matrix& rhs);
+
+		// += , + , -=, -
+		Matrix& operator+=(const Matrix& rhs);
+		friend Matrix operator+(Matrix lhs, const Matrix & rhs);
+
+		Matrix& operator-=(const Matrix& rhs);
+		friend Matrix operator-(Matrix lhs, const Matrix &rhs);
+
+		Matrix& operator*=(const Matrix &rhs);
+		friend Matrix operator*(const Matrix &lhs, const Matrix &rhs);
+
 };
 //istream ist = filename(A.TXT);
 Matrix x;

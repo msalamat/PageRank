@@ -58,8 +58,8 @@ Matrix::Matrix(int r, int c) {
  */
 void Matrix::printMatrix() {
 
-	for (int i = 0; i < daddyVector.size(); i++) {
-		for (int j = 0; j < daddyVector[i].size(); j++) {
+	for (unsigned long i = 0; i < daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < daddyVector[i].size(); j++) {
 			cout << daddyVector[i][j] << " ";
 		}
 		cout << endl;
@@ -115,8 +115,8 @@ double Matrix::get_value(int row, int column) {
  * Zero out the matrix
  */
 void Matrix::clear() {
-	for (int i = 0; i < daddyVector.size(); i++) {
-		for (int j = 0; j < daddyVector[i].size(); j++) {
+	for (unsigned long i = 0; i < daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < daddyVector[i].size(); j++) {
 			daddyVector[i][j] = 0.0;
 		}
 	}
@@ -128,7 +128,7 @@ void Matrix::clear() {
 Matrix::~Matrix() {
 //	daddyVector.clear();
 //	daddyVector.shrink_to_fit();
-	for (int i = 0; i < daddyVector.size(); i++) {
+	for (unsigned long i = 0; i < daddyVector.size(); i++) {
 		daddyVector[i].clear();
 		daddyVector[i].shrink_to_fit();
 	}
@@ -143,8 +143,8 @@ Matrix::~Matrix() {
  * @return
  */
 ostream &operator<<(ostream & o, Matrix & m)  {
-	for (int i = 0; i < m.daddyVector.size(); i++) {
-		for (int j = 0; j < m.daddyVector[i].size(); j++){
+	for (unsigned long i = 0; i < m.daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < m.daddyVector[i].size(); j++){
 			o << m.daddyVector[i][j] << "\t";
 		}
 		o << endl;
@@ -169,8 +169,8 @@ bool operator==(const Matrix &lhs, const Matrix &rhs) {
 
 	double smallerNum, biggerNum;
 
-	for (int i = 0; i < lhs.daddyVector.size(); i++) {
-		for (int j = 0; j < lhs.daddyVector[i].size(); j++) {
+	for (unsigned long i = 0; i < lhs.daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < lhs.daddyVector[i].size(); j++) {
 			smallerNum = min(lhs.daddyVector[i][j], rhs.daddyVector[i][j]);
 			biggerNum = max(lhs.daddyVector[i][j], rhs.daddyVector[i][j]);
 			if (biggerNum >
@@ -199,8 +199,8 @@ bool operator!=(Matrix &lhs, Matrix &rhs) {
  */
 Matrix &Matrix::operator++() {
 
-	for (int i = 0; i < daddyVector.size(); i++) {
-		for (int j = 0; j < daddyVector[i].size(); j++) {
+	for (unsigned long i = 0; i < daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < daddyVector[i].size(); j++) {
 			++daddyVector[i][j];
 		}
 	}
@@ -212,21 +212,22 @@ Matrix &Matrix::operator++() {
  * ASK SOMEONE WHAT THE DUMMY IS FOR (SOMETHING ABOUT DISTINGUISHING IT)
  * @return
  */
-Matrix Matrix::operator++(int dummy) {
+Matrix Matrix::operator++(int) {
 	Matrix old(*this);
 	operator++();
 	return old;
 }
 
 Matrix &Matrix::operator--() {
-	for (int i = 0; i < daddyVector.size(); i++) {
-		for (int j = 0; j < daddyVector[i].size(); j++) {
+	for (unsigned long i = 0; i < daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < daddyVector[i].size(); j++) {
 			--daddyVector[i][j];
 		}
 	}
 	return *this;
 }
 
+// don't forget to ask about this again
 Matrix Matrix::operator--(int) {
 	Matrix old(*this);
 	operator--();
@@ -244,20 +245,99 @@ Matrix& Matrix::operator=(Matrix rhs) {
  * @param rhs
  */
 void Matrix::mySwap(Matrix &matrix, Matrix rhs) {
-	for (int i = 0; i < rhs.daddyVector.size(); i++) {
-		for (int j = 0; j < rhs.daddyVector[i].size(); j++) {
+	for (unsigned long i = 0; i < rhs.daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < rhs.daddyVector[i].size(); j++) {
 			matrix.daddyVector[i][j] = rhs.daddyVector[i][j];
 		}
 	}
 }
 
+Matrix& Matrix::operator+=(const Matrix &rhs) {
+
+	*this = *this + rhs;
+
+	return *this;
+}
+
+/*
+ * "Friend to the left side matrix, friends with object on left"
+ */
+Matrix operator+(Matrix lhs, const Matrix &rhs) {
+
+	if (lhs.daddyVector.size() != rhs.daddyVector.size())
+		throw ("not same size error");
+	if (lhs.daddyVector[0].size() != rhs.daddyVector[0].size())
+		throw ("not same size error");
+
+	for (unsigned long i = 0; i < lhs.daddyVector.size(); i++) {
+		for (unsigned long j = 0; j < lhs.daddyVector[i].size(); j++) {
+			lhs.daddyVector[i][j] += rhs.daddyVector[i][j];
+		}
+	}
+	return lhs;
+
+}
+
+Matrix &Matrix::operator-=(const Matrix &rhs) {
+	*this = *this - rhs;
+
+	return *this;
+}
+
+Matrix operator-(Matrix lhs, const Matrix &rhs) {
+	if (lhs.daddyVector.size() != rhs.daddyVector.size())
+		throw ("not same size error");
+	if (lhs.daddyVector[0].size() != rhs.daddyVector[0].size())
+		throw ("not same size error");
+
+	for (unsigned long i = 0; i < lhs.daddyVector.size(); i++) {
+		for (unsigned int j = 0; j < lhs.daddyVector[i].size(); j++) {
+			lhs.daddyVector[i][j] -= rhs.daddyVector[i][j];
+		}
+	}
+	return lhs;
+
+}
+
+Matrix &Matrix::operator*=(const Matrix &rhs) {
+	*this = *this - rhs;
+
+	return *this;
+}
+
+Matrix operator*(const Matrix &lhs, const Matrix &rhs) {
+
+	if (lhs.daddyVector[0].size() != rhs.daddyVector.size()) {
+		throw ("col lhs must == row of rhs");
+	}
+
+
+	// an "n x m"
+	int n = (int) lhs.daddyVector.size();
+	int m = (int) rhs.daddyVector[0].size();
+	int l = (int) rhs.daddyVector.size();
+
+	Matrix resulting_matrix{n,m};
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			double result = 0;
+			for (int k = 0; k < l; k++) {
+				result += lhs.daddyVector[i][k] * rhs.daddyVector[k][j];
+			}
+			resulting_matrix.daddyVector[i][j] = result;
+		}
+	}
+	return resulting_matrix;
+}
+
 
 /**
- * Determins whether a number is a square number
+ * Determines whether a number is a square number
  * @param n
  * @return
  */
-bool isSquare(unsigned long long n) {
+bool isSquare(int n) {
 	int sq = (int) sqrt(n);
 	return sq*sq == n;
 }
