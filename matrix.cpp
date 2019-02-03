@@ -2,8 +2,10 @@
 // Created by Mohammad Salamat on 2019-01-28.
 //
 #include <iostream>
-#include <math.h>       /* sqrt */
+#include <cmath>       /* sqrt */
 #include "matrix.hpp"
+
+const double similarGuy = 0.0001;
 
 /**
  * Constructor 1
@@ -71,19 +73,18 @@ void Matrix::printMatrix() {
  * @param p
  * @param size
  */
-Matrix::Matrix(double *p, unsigned long long size) {
+Matrix::Matrix(double *p, int size) {
 	if (!isSquare(size)) {
 		throw invalid_argument("Not a square, try again.");
 	}
 
-	int counter = 0;
-
-	for (int i = 0; i < sqrt(size); i++) {
+	int counter = 0, sqrt_size = (int) sqrt(size);
+	for (int i = 0; i < sqrt_size; i++) {
 
 		vector<double> babyVector;
 
-		for (int j = 0; j < sqrt(size); j++) {
-			babyVector.push_back(*(p+counter));
+		for (int j = 0; j < sqrt_size; j++) {
+			babyVector.push_back(* (p+counter));
 			counter++;
 		}
 
@@ -143,6 +144,7 @@ Matrix::~Matrix() {
  * @return
  */
 ostream &operator<<(ostream & o, Matrix & m)  {
+
 	for (unsigned long i = 0; i < m.daddyVector.size(); i++) {
 		for (unsigned long j = 0; j < m.daddyVector[i].size(); j++){
 			o << m.daddyVector[i][j] << "\t";
@@ -169,12 +171,12 @@ bool operator==(const Matrix &lhs, const Matrix &rhs) {
 
 	double smallerNum, biggerNum;
 
-	for (unsigned long i = 0; i < lhs.daddyVector.size(); i++) {
-		for (unsigned long j = 0; j < lhs.daddyVector[i].size(); j++) {
+	for (int i = 0; i < (int) lhs.daddyVector.size(); i++) {
+		for (int j = 0; j < (int) lhs.daddyVector[i].size(); j++) {
 			smallerNum = min(lhs.daddyVector[i][j], rhs.daddyVector[i][j]);
 			biggerNum = max(lhs.daddyVector[i][j], rhs.daddyVector[i][j]);
 			if (biggerNum >
-				smallerNum + 0.1) // I don't think we actually need to include  || biggerNum < smallerNum - 0.1)
+				smallerNum + similarGuy) // I don't think we actually need to include  || biggerNum < smallerNum - 0.1)
 				return false;
 		}
 	}
@@ -265,9 +267,9 @@ Matrix& Matrix::operator+=(const Matrix &rhs) {
 Matrix operator+(Matrix lhs, const Matrix &rhs) {
 
 	if (lhs.daddyVector.size() != rhs.daddyVector.size())
-		throw ("not same size error");
+		throw invalid_argument("not same size error");
 	if (lhs.daddyVector[0].size() != rhs.daddyVector[0].size())
-		throw ("not same size error");
+		throw invalid_argument("not same size error");
 
 	for (unsigned long i = 0; i < lhs.daddyVector.size(); i++) {
 		for (unsigned long j = 0; j < lhs.daddyVector[i].size(); j++) {
@@ -286,9 +288,9 @@ Matrix &Matrix::operator-=(const Matrix &rhs) {
 
 Matrix operator-(Matrix lhs, const Matrix &rhs) {
 	if (lhs.daddyVector.size() != rhs.daddyVector.size())
-		throw ("not same size error");
+		throw invalid_argument("not same size error");
 	if (lhs.daddyVector[0].size() != rhs.daddyVector[0].size())
-		throw ("not same size error");
+		throw invalid_argument("not same size error");
 
 	for (unsigned long i = 0; i < lhs.daddyVector.size(); i++) {
 		for (unsigned int j = 0; j < lhs.daddyVector[i].size(); j++) {
@@ -308,7 +310,7 @@ Matrix &Matrix::operator*=(const Matrix &rhs) {
 Matrix operator*(const Matrix &lhs, const Matrix &rhs) {
 
 	if (lhs.daddyVector[0].size() != rhs.daddyVector.size()) {
-		throw ("col lhs must == row of rhs");
+		throw invalid_argument("col lhs must == row of rhs");
 	}
 
 
@@ -329,6 +331,85 @@ Matrix operator*(const Matrix &lhs, const Matrix &rhs) {
 		}
 	}
 	return resulting_matrix;
+}
+
+int Matrix::getColoumnIfAllZeroes(const Matrix &m) {
+
+	int count = 0;
+
+	for (int i = 0; i < (int) m.daddyVector[0].size(); i++) { /* loop column by column */
+		for (int j = 0; j < (int) m.daddyVector.size(); j++) {
+			if (m.daddyVector[j][i] == 0)
+				break;
+			else
+				count++;
+
+		}
+
+		if (count == (int) m.daddyVector[0].size())
+			return i; /* the col with all zeroes */
+
+		count = 0;
+	}
+
+
+	return -1;
+}
+
+Matrix Matrix::getImportanceMatrix() {
+	Matrix m = *this;
+	int mSize = (int) m.daddyVector.size();
+	for (int i = 0; i < mSize; i++) {
+		double colWeight = 0;
+		for (int j = 0; j < mSize; j++) {
+			colWeight += m.daddyVector[j][i];
+
+		}
+		if (colWeight == 0) {
+			for (int j = 0; j < mSize; j++) {
+				m.daddyVector[j][i] = 1.0/mSize;
+			}
+		} else {
+			for (int j = 0; j < mSize; j++) {
+				m.daddyVector[j][i] /= colWeight;
+			}
+		}
+	}
+	return m;
+}
+
+int Matrix::get_size() {
+	return (int) (this->daddyVector.size());
+}
+
+/* takes care of p * 1/size distritufsi */
+Matrix::Matrix(int size, double p) : Matrix(size) {
+
+	double something = p/size;
+	for (int i = 0; i < (int) daddyVector[0].size(); i++) {
+		for (int j = 0; j < (int) daddyVector.size(); j++) {
+			daddyVector[i][j] = something;
+		}
+	}
+}
+
+Matrix::Matrix(int r, int c, double n) : Matrix(r, c) {
+	for (int i = 0; i < r; i++) {
+		for (int j = 0; j < c; j++) {
+			daddyVector[i][j] = n;
+		}
+	}
+
+}
+
+Matrix operator*(double scale, const Matrix &lhs) {
+	Matrix m = lhs;
+	for (int i = 0; i < (int) lhs.daddyVector.size(); i++) {
+		for (int j = 0; j < (int) lhs.daddyVector[i].size(); j++) {
+			m.daddyVector[i][j] *= scale;
+		}
+	}
+	return m;
 }
 
 

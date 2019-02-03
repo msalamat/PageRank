@@ -7,7 +7,7 @@
 
 #include <vector>
 
-bool isSquare(unsigned long long n);
+bool isSquare(int n);
 
 using namespace std;
 class Matrix {
@@ -19,14 +19,15 @@ class Matrix {
 		Matrix(int n);
 		Matrix(int r, int c);
 
-		Matrix(double *p, unsigned long long size);
-
+		Matrix(double *p, int size);
+		Matrix(int size, double p);
+		Matrix(int r, int c, double n);
 		void printMatrix();
 
 		void set_value(int row, int column, double newNum);
 
 		double get_value(int row, int column);
-
+		int get_size();
 		void clear();
 		~Matrix();
 
@@ -58,10 +59,15 @@ class Matrix {
 		Matrix& operator*=(const Matrix &rhs);
 		friend Matrix operator*(const Matrix &lhs, const Matrix &rhs);
 
-};
-//istream ist = filename(A.TXT);
-Matrix x;
-//while(ist >> x)
+		friend Matrix operator*(double scale, const Matrix &lhs);
 
+		Matrix getImportanceMatrix();
+
+		// helper function
+		int getColoumnIfAllZeroes(const Matrix &m);
+};
 
 #endif //ASSIGNMENT01_MATRIX_HPP
+
+// inline functions work liek a macro. transform all your method calls to the actual function
+// why is it good, bad
