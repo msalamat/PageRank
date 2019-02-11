@@ -20,7 +20,6 @@ bool isSquare(int n) {
 	return sq*sq == n;
 }
 
-
 Matrix::Matrix() {
 	vector<double> babyVector;
 	babyVector.push_back(0.0);
