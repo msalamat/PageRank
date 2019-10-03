@@ -1,4 +1,3 @@
-Mohammad Salamat
-A00953647
+# PageRank
 
-100% complete
+An implementation of Google's Page Rank algorithm with a little help from an old Brazilian Jedi
